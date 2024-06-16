@@ -1,0 +1,44 @@
+name: Compile and Run Snippets
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  compile-and-run-snippets:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        pip install pyyaml
+        pip install markdown
+
+    - name: Extract snippets from README.md
+      id: extract_snippets
+      run: |
+        python .github/scripts/extract_snippets.py
+
+    - name: Compile and run snippets
+      run: |
+        for snippet in ${{ steps.extract_snippets.outputs.snippets }}; do
+          echo "Compiling and running snippet: $snippet"
+          # Add compilation and execution commands here
+          # Example for Java:
+          # javac $snippet
+          # java -cp . $(basename $snippet .java)
+          # Example for Python:
+          # python $snippet
+        done
